@@ -38,12 +38,17 @@ on fs
 on init
     start vendor.qseecomd
     start boot-hal-1-0
-    start systemcheck
     setprop crypto.ready 1
 
 on property:vendor.sys.listeners.registered=true
     start keymaster-4-0
     start gatekeeper-1-0
+
+on property:twrp.all.users.decrypted=true
+    setprop crypto.ready 0
+    stop vendor.qseecomd
+    stop gatekeeper-1-0
+    stop keymaster-4-0
 
 on boot 
     insmod /vendor/lib/modules/sec_touchscreen.ko
@@ -51,31 +56,26 @@ on boot
     write /sys/devices/virtual/sec/tsp/after_work 1
     write /proc/touchpanel/gesture_enable 1
     start vibrator-service
-    setprop sys.usb.config adb
 
 service vendor.qseecomd /vendor/bin/qseecomd
     user root
     group root
+    oneshot
     disabled
     seclabel u:r:recovery:s0
 
 service keymaster-4-0 /vendor/bin/hw/android.hardware.keymaster@4.0-service-qti
     user root
     group root
+    oneshot
     disabled
     seclabel u:r:recovery:s0
 
 service gatekeeper-1-0 /vendor/bin/hw/android.hardware.gatekeeper@1.0-service-qti
     user root
     group root
-    disabled
-    seclabel u:r:recovery:s0
-
-service systemcheck /vendor/bin/systemcheck.sh
-    user root
-    group root
-    disabled
     oneshot
+    disabled
     seclabel u:r:recovery:s0
 
 service time_daemon /vendor/bin/time_daemon
