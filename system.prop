@@ -3,6 +3,9 @@ ro.product.board=msmnile
 ro.board.platform=msmnile
 ro.display.series=Xperia 1
 persist.fuse_sdcard=true
+ro.boot.avb_version=2.0
+ro.boot.vbmeta.avb_version=2.0
+persist.sys.usb.config=adb
 
 # Crypto
 ro.crypto.volume.filenames_mode=aes-256-cts
